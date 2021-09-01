@@ -1,0 +1,29 @@
+.remainder{
+    width: 120px;
+    height: 80px;
+    background-color:grey;
+    display: none;
+    position: absolute;
+    z-index: 2;
+}
+.text{
+    width: 100px;
+    margin-left:5px;
+    
+}
+/* .main{
+    border-top: 1px solid grey;
+} */
+span{
+    border: 0.1px solid grey;
+    /* display: block; */
+    vertical-align: top;
+}
+
+.week{
+    margin-bottom: 0;
+}
+.main{
+    position:absolute;
+    z-index: 1;
+}

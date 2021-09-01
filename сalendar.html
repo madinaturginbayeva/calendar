@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main">
+        <div class="kd"></div>
+        
+        <button class="btn">next</button>
+        <button class="btn2">prev</button>
+    </div>
+    <div class="remainder">
+        <input class="text" type="text">
+        <div class="text2"></div>
+    </div>
+    
+    <script>
+        class Kalendar{
+            constructor(element){
+                this.element = element;
+                this.kd = document.querySelector('.kd');
+                this.btn = document.querySelector('.btn');
+                this.btn2 = document.querySelector('.btn2');
+                this.currYear;
+                this.currMonth;
+                this.weekDay;
+                this.week = ['пн','вт','ср','чт','пт','сб','вс'];
+                this.arr=[];
+                this.remainder =  document.querySelector('.remainder');
+                this.currentYear();
+            }
+            //план действий
+            //1. определить какой год и сделать массив с его месяцами
+            //2. определить какой месяц сейчас
+            //3. узнать какой день недели 1 число месяца
+            //4. показывать текущий месяц
+            
+            //5. вывести дни недели сверху
+            //6. след месяц делаеь тру на след месяц и вызвать (теперь текущий) след месяц
+            //7. перд месяц делает тру на пред месяц и вызвать (теперь текущий) пред месяц
+            ////////////////////
+            currentYear(){
+                this.currYear = new Date().getFullYear();
+                // console.log(this.currYear);
+                for (let i = 0; i<12; i++){
+                    let month = new Date(this.currYear, i);
+                    this.arr.push(month);  
+                }
+                // console.log(this.arr);
+                //текущий год 2021
+                // this.showWeekDays();
+                this.currentMonth();
+                
+            }
+
+            currentMonth(){
+                let found = (new Date().getMonth());
+                for (let i = 0; i < this.arr.length; i++) {
+                    if (this.arr.indexOf(this.arr[i])==found){
+                        this.currMonth=(this.arr[i]).getMonth();
+                    }
+                }
+                //текущий месяц = 7, потому что начинается с 0
+                this.btn.addEventListener("click", (e)=>{
+                    while (this.kd.firstChild) {
+                        this.kd.removeChild(this.kd.firstChild);
+                    }
+                    this.currDay(this.currMonth+1);
+                })
+                this.btn2.addEventListener("click", (e)=>{
+                    while (this.kd.firstChild) {
+                        this.kd.removeChild(this.kd.firstChild);
+                    }
+                    this.currDay(this.currMonth-1);
+                })
+                this.currDay(this.currMonth);
+
+            }
+
+            currDay(month){
+                this.weekDay=new Date(this.currYear, month).getDay();
+                // дает 0, то есть вскр, правильно
+                this.showWeekDays();
+                this.showCurrentMonth(month);
+            }
+
+            showCurrentMonth(month){
+                this.maxDays = new Date(this.currYear, month+1, 0).getDate();
+                
+                this.kd.style.maxWidth = "720px";
+                if (this.weekDay==0)this.weekDay=7;
+                this.listt = this.kd.appendChild(document.createElement('span'));
+                for (let i=1; i<this.maxDays+this.weekDay; i++){
+                    this.listt = this.kd.appendChild(document.createElement('span'));
+                    this.listt.className='list_li';
+                    this.listt.style.display = 'inline-block';
+                    this.listt.style.width = "100.2px";
+                    this.listt.style.height = "80px";
+                    if (i<this.weekDay) this.listt.innerHTML += "";
+                    else{ this.listt.innerHTML += i-(this.weekDay-1);}
+                }
+            
+                this.currMonth=month;
+                this.highlightDay();
+            }
+            highlightDay(){
+                let days = document.querySelectorAll('span');
+                let taskIn = document.querySelector('.text');
+                let taskOut= document.querySelector('.text2');
+                let thisday;
+                for (let i=1; i<days.length; i++){
+                    
+                    days[i].addEventListener("click", (e)=>{
+                        taskIn.value ='';
+                        taskOut.innerHTML = days[i].innerHTML;
+                        thisday=days[i];
+                        let x = e.pageX;
+                        let y = e.pageY;
+                        document.addEventListener('click', e=>{
+                            
+                            if (!this.remainder.contains(e.target) && !days[i].contains(e.target)){
+                                this.remainder.style.display = 'none';
+                            }
+                            if (days[i].contains(e.target)){
+                                
+                                this.remainder.style.display='block';
+                                
+                                this.remainder.style.top=y +'px';
+                                this.remainder.style.left=x + 'px';
+                            }
+                        })
+                    })
+                }
+                taskIn.addEventListener("input", function(){
+                    console.log((thisday.innerHTML).length);
+                    if ((thisday.innerHTML).length%12==0)thisday.innerHTML+='<br/>';
+                    thisday.innerHTML=thisday.innerHTML.substring(0,2);
+                    thisday.innerHTML+='<br/>'+taskIn.value;
+                    
+                    
+                    
+                })
+                // thisday.innerHTML='';
+            }
+            showWeekDays(){
+                console.log('вызыв есть');
+                for (let i=0; i<this.week.length; i++){
+                    this.listt = this.kd.appendChild(document.createElement('span'));
+                    this.listt.className='week';
+                    this.listt.innerHTML += this.week[i];
+                    this.listt.style.display = 'inline-block';
+                    this.listt.style.padding ='10px 85px 10px 0';
+                }
+            }
+            // добавить рамку, задачу, чтобы таск был рядом с числом 
+        }
+        new Kalendar();
+    </script>
+</body>
+</html>
